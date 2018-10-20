@@ -1,0 +1,27 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Tickets</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th><%= Ticket.human_attribute_name('code') %></th>
+      <th><%= Ticket.human_attribute_name('maker') %></th>
+      <th><%= Ticket.human_attribute_name('hostname') %></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @tickets.each do |ticket| %>
+      <tr>
+        <td><%= link_to ticket.code, ticket %></td>
+        <td><%= ticket.maker %></td>
+        <td><%= ticket.hostname %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Ticket', new_ticket_path %>

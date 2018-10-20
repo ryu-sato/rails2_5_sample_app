@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_20_185354) do
+ActiveRecord::Schema.define(version: 2018_10_20_203901) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -50,15 +50,30 @@ ActiveRecord::Schema.define(version: 2018_10_20_185354) do
     t.index ["command_log_set_id"], name: "index_command_logs_on_command_log_set_id"
   end
 
-  create_table "comparisons", force: :cascade do |t|
+  create_table "comparison_sets", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "difference", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "ticket_id"
     t.integer "normal_log_set_id"
     t.integer "anomaly_log_set_id"
     t.integer "lock_version", default: 0
-    t.index ["anomaly_log_set_id"], name: "index_comparisons_on_anomaly_log_set_id"
-    t.index ["normal_log_set_id"], name: "index_comparisons_on_normal_log_set_id"
+    t.index ["anomaly_log_set_id"], name: "index_comparison_sets_on_anomaly_log_set_id"
+    t.index ["normal_log_set_id"], name: "index_comparison_sets_on_normal_log_set_id"
+    t.index ["ticket_id"], name: "index_comparison_sets_on_ticket_id"
+  end
+
+  create_table "comparisons", force: :cascade do |t|
+    t.string "difference", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "ticket_id"
+    t.integer "normal_log_id"
+    t.integer "anomaly_log_id"
+    t.integer "lock_version", default: 0
+    t.index ["anomaly_log_id"], name: "index_comparisons_on_anomaly_log_id"
+    t.index ["normal_log_id"], name: "index_comparisons_on_normal_log_id"
     t.index ["ticket_id"], name: "index_comparisons_on_ticket_id"
   end
 

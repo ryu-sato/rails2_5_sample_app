@@ -1,0 +1,36 @@
+<p id="notice"><%= notice %></p>
+
+<dt><%= Ticket.human_attribute_name('code') %></dt>
+<dd><%= @ticket.code %></dd>
+<dt><%= Ticket.human_attribute_name('maker') %></dt>
+<dd><%= @ticket.maker %></dd>
+<dt><%= Ticket.human_attribute_name('hostname') %></dt>
+<dd><%= @ticket.hostname %></dd>
+<dt><%= Ticket.human_attribute_name('normal_log') %><dt>
+<dd><%= @ticket.normal_log %></dd>
+<dt><%= Ticket.human_attribute_name('raw_anomaly_log') %></dt>
+<dd><%= link_to 'raw_anomaly_log', rails_blob_path(@ticket.raw_anomaly_log, disposition: "raw_anomaly_log") %></dd>
+
+<h2><%= ComparisonSet.model_name.human.titleize %></h2>
+<h3>when flow values exists</h3>
+<% if @comparison_sets_when_flow_values_exists.present? %>
+  <%= link_to "summary", comparison_set_path(@comparison_sets_when_flow_values_exists) %>
+<% end %>
+
+<h3>when flow values are removed</h3>
+<% if @comparison_sets_when_flow_values_are_removed.present? %>
+  <%= link_to "summary", comparison_set_path(@comparison_sets_when_flow_values_are_removed) %>
+<% end %>
+
+<h2><%= Comparison.model_name.human.titleize %></h2>
+<h3>when flow values exists</h3>
+<% @comparison_sets_when_flow_values_exists&.each do |c| %>
+<%= link_to c.command_name, comparison_path(c) %>
+<% end %>
+
+<h3>when flow values are removed</h3>
+<% @comparison_sets_when_flow_values_are_removed&.each do |c| %>
+  <%= link_to c.command_name, comparison_path(c) %>
+<% end %>
+
+<%= link_to 'Back', tickets_path %>
