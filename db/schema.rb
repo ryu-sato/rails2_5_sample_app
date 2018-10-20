@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_20_163017) do
+ActiveRecord::Schema.define(version: 2018_10_20_185354) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -31,6 +31,42 @@ ActiveRecord::Schema.define(version: 2018_10_20_163017) do
     t.string "checksum", null: false
     t.datetime "created_at", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "command_log_sets", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "hostname", null: false
+    t.boolean "is_normal", default: false, null: false
+    t.integer "ticket_id"
+    t.integer "lock_version", default: 0
+    t.index ["ticket_id"], name: "index_command_log_sets_on_ticket_id"
+  end
+
+  create_table "command_logs", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "result", default: "", null: false
+    t.integer "command_log_set_id"
+    t.integer "lock_version", default: 0
+    t.index ["command_log_set_id"], name: "index_command_logs_on_command_log_set_id"
+  end
+
+  create_table "comparisons", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "ticket_id"
+    t.integer "normal_log_set_id"
+    t.integer "anomaly_log_set_id"
+    t.integer "lock_version", default: 0
+    t.index ["anomaly_log_set_id"], name: "index_comparisons_on_anomaly_log_set_id"
+    t.index ["normal_log_set_id"], name: "index_comparisons_on_normal_log_set_id"
+    t.index ["ticket_id"], name: "index_comparisons_on_ticket_id"
+  end
+
+  create_table "tickets", force: :cascade do |t|
+    t.string "code", null: false
+    t.string "maker", null: false
+    t.string "hostname", null: false
+    t.integer "lock_version", default: 0
   end
 
 end
