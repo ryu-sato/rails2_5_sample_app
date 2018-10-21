@@ -15,7 +15,6 @@ class TicketsController < ApplicationController
     @comparison_sets = ComparisonSet.where(id: @ticket.normal_log_raw.normal_command_log_set_ids)
     # [TODO] 実装
     @comparison_units = []
-binding.pry
   end
 
   # GET /tickets/new
@@ -66,17 +65,28 @@ binding.pry
     end
 
     def generate_comparison
-      require 'net/https'
-
       ps = ProcessorService.instance
-      blob = @ticket.anomaly_log_raw.raw_log.blob
-      log_content = IO.read(blob.service.send(:path_for, blob.key))
+
       ActiveRecord::Base.transaction do
+        blob = @ticket.anomaly_log_raw.raw_log.blob
+        log_content = IO.read(blob.service.send(:path_for, blob.key))
         anomaly_cmdset = AnomalyCommandLogSet.create(
           phase: 'parsed_and_no_unused_values',
           anomaly_log_raw: @ticket.anomaly_log_raw
         )
-        anomaly_cmdset.anomaly_command_logs = ps.parse_commands(log_content)
+        ps.parse_commands(log_content).each do |hash|
+          anomaly_cmdset.anomaly_command_logs << AnomalyCommandLog.create(name: hash[:name], result: hash[:result])
+        end
+
+        blob = @ticket.normal_log_raw.raw_log.blob
+        log_content = IO.read(blob.service.send(:path_for, blob.key))
+        normal_cmdset = NormalCommandLogSet.create(
+          phase: 'parsed_and_no_unused_values',
+          normal_log_raw: @ticket.normal_log_raw
+        )
+        ps.parse_commands(log_content).each do |hash|
+          normal_cmdset.normal_command_logs << NormalCommandLog.create(name: hash[:name], result: hash[:result])
+        end
       end
     end
 end

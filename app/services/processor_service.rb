@@ -14,7 +14,10 @@ class ProcessorService
 
         next cmd_logs if name.blank? || result.blank?
 
-        cmd_logs << AnomalyCommandLog.create(name: name, result: result.join)
+        cmd_logs << {
+          name: name,
+          result: result.join
+        }
       end
   end
 end
