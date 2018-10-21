@@ -1,0 +1,25 @@
+<h1>Anomaly Log Raws</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th><%= AnomalyLogRaw.human_attribute_name('hostname') %></th>
+      <th><%= AnomalyLogRaw.human_attribute_name('raw_log') %></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @anomaly_log_raws.each do |anomaly_log_raw| %>
+      <tr>
+        <td><%= anomaly_log_raw.hostname %></td>
+        <td><%= link_to 'raw_log', rails_blob_path(anomaly_log_raw.raw_log, disposition: "attachment") %></td>
+        <td><%= link_to 'Destroy', anomaly_log_raw, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Anomaly Log Raw', new_anomaly_log_raw_path %>

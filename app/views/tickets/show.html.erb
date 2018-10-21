@@ -4,31 +4,25 @@
 <dd><%= @ticket.maker %></dd>
 <dt><%= Ticket.human_attribute_name('hostname') %></dt>
 <dd><%= @ticket.hostname %></dd>
-<dt><%= Ticket.human_attribute_name('raw_normal_log') %><dt>
-<dd><%= @ticket.raw_normal_log %></dd>
-<dt><%= Ticket.human_attribute_name('raw_anomaly_log') %></dt>
-<dd><%= link_to 'raw_anomaly_log', rails_blob_path(@ticket.raw_anomaly_log, disposition: "raw_anomaly_log") %></dd>
+<dt><%= Ticket.human_attribute_name('normal_log_raw') %><dt>
+<dd><%= @ticket.normal_log_raw %></dd>
+<dt><%= Ticket.human_attribute_name('anomaly_log_raw') %></dt>
+<dd><%= link_to "anomaly_log_raw", rails_blob_path(@ticket.anomaly_log_raw.raw_log, disposition: "attachment") %></dd>
 
 <h2><%= ComparisonSet.model_name.human.titleize %></h2>
-<h3>when flow values exists</h3>
-<% if @comparison_sets_when_flow_values_exists.present? %>
-  <%= link_to "summary", comparison_set_path(@comparison_sets_when_flow_values_exists) %>
+<% anomaly_cmdsets = @ticket.anomaly_log_raw&.anomaly_command_log_sets %>
+<% if anomaly_cmdsets.present? %>
+  <% anomaly_cmdsets.each do |anomaly_cmdset| %>
+    <%= link_to anomaly_cmdset.type, comparison_set_path(anomaly_cmdset.comparison_set) %>
+  <% end %>
 <% end %>
 
-<h3>when flow values are removed</h3>
-<% if @comparison_sets_when_flow_values_are_removed.present? %>
-  <%= link_to "summary", comparison_set_path(@comparison_sets_when_flow_values_are_removed) %>
-<% end %>
-
-<h2><%= Comparison.model_name.human.titleize %></h2>
-<h3>when flow values exists</h3>
-<% @comparison_sets_when_flow_values_exists&.each do |c| %>
-<%= link_to c.command_name, comparison_path(c) %>
-<% end %>
-
-<h3>when flow values are removed</h3>
-<% @comparison_sets_when_flow_values_are_removed&.each do |c| %>
-  <%= link_to c.command_name, comparison_path(c) %>
+<h2><%= ComparisonUnit.model_name.human.titleize %></h2>
+<% anomaly_cmdlogs = @ticket.anomaly_log_raw&.anomaly_command_log_sets&.pluck(:anomaly_command_logs) %>
+<% if anomaly_cmdlogs.present? %>
+  <% anomaly_cmdlogs.each do |anomaly_cmdlog| %>
+    <%= link_to anomaly_cmdlog.name, comparison_set_path(anomaly_cmdlog.comparison_unit) %>
+  <% end %>
 <% end %>
 
 <%= link_to 'Back', tickets_path %>

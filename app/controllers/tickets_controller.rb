@@ -1,5 +1,5 @@
 class TicketsController < ApplicationController
-  before_action :set_ticket, only: [:show, :edit, :update, :destroy]
+  before_action :set_ticket, only: [:edit, :update, :destroy]
 
   # GET /tickets
   # GET /tickets.json
@@ -10,8 +10,8 @@ class TicketsController < ApplicationController
   # GET /tickets/1
   # GET /tickets/1.json
   def show
-    @comparison_sets_when_flow_values_exists = @ticket.comparison_sets.find_by(name: 'when_flow_values_exists').presence || []
-    @comparison_sets_when_flow_values_are_removed = @ticket.comparison_sets.find_by(name: 'when_flow_values_are_removed').presence || []
+    @ticket = Ticket.preload(normal_log_raw: [normal_command_log_sets: [comparison_sets: :comparison_units]])
+                .find(params[:id])
   end
 
   # GET /tickets/new
@@ -27,11 +27,9 @@ class TicketsController < ApplicationController
   # POST /tickets.json
   def create
     @ticket = Ticket.new(ticket_params)
-    @ticket.raw_normal_log = NormalLogRaw.find_by(hostname: @ticket.hostname, is_normal: true)
-    @ticket.errors.add(:raw_normal_log, "ホスト名が#{@ticket.hostname}である正常時ログが見つかりません") if @ticket.raw_normal_log.blank?
 
     respond_to do |format|
-      if @ticket.errors.blank? && @ticket.save
+      if @ticket.errors.size == 0 && @ticket.save
         format.html { redirect_to @ticket, notice: 'Ticket was successfully created.' }
         format.json { render :show, status: :created, location: @ticket }
       else
@@ -73,6 +71,6 @@ class TicketsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def ticket_params
-      params.require(:ticket).permit(:code, :maker, :hostname, :raw_anomaly_log)
+      params.require(:ticket).permit(:code, :maker, :hostname, :normal_log_raw_id, :anomaly_log_raw_id)
     end
 end
