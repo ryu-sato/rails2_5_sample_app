@@ -69,7 +69,8 @@ class TicketsController < ApplicationController
       @comparison_sets = ComparisonSet.where(ticket_id: @ticket.id)
       @comparison_units = ComparisonUnit.where(ticket_id: @ticket.id)
 
-      return if @comparison_sets.present? && @comparison_units.present?
+      # [TODO] 本番では元戻しする (強制再生成するようコメントアウトしている)
+      # return if @comparison_sets.present? && @comparison_units.present?
 
       ActiveRecord::Base.transaction do
         @comparison_sets.destroy_all
@@ -94,13 +95,40 @@ class TicketsController < ApplicationController
         end
 
         diff_summary = ps.compare_command_sets(normal_cmdset, anomaly_cmdset)
-        ComparisonSet.create(ticket_id: @ticket.id, phase: 'parsed_and_no_unused_values', diff_summary: diff_summary)
+        compset = ComparisonSet.create(ticket_id: @ticket.id, phase: 'parsed_and_no_unused_values', diff_summary: diff_summary)
 
         anomaly_cmdset.anomaly_command_logs.each do |anomaly_log|
           normal_log = normal_cmdset.normal_command_logs.find_by(name: anomaly_log.name)
           next if normal_log.blank?
           diff = ps.compare_command(normal_log, anomaly_log)
-          ComparisonUnit.create(ticket_id: @ticket.id, name: anomaly_log.name, diff: diff)
+          compset.comparison_units << ComparisonUnit.create(ticket_id: @ticket.id, name: anomaly_log.name, diff: diff)
+        end
+
+
+        anomaly_cmdset_ph2 = AnomalyCommandLogSet.create(phase: 'removed_flow_values',
+                                                           anomaly_log_raw: @ticket.anomaly_log_raw)
+        anomaly_cmdset.anomaly_command_logs.each do |cmd|
+          method_name = ps.replace_method_name(cmd.name)
+          result = ps.send(method_name, cmd.result)
+          anomaly_cmdset_ph2.anomaly_command_logs << AnomalyCommandLog.create(name: cmd.name, result: result.presence || cmd.result)
+        end
+
+        normal_cmdset_ph2 = NormalCommandLogSet.create(phase: 'removed_flow_values',
+                                                         normal_log_raw: @ticket.normal_log_raw)
+        normal_cmdset.normal_command_logs.each do |cmd|
+          method_name = ps.replace_method_name(cmd.name)
+          result = ps.send(method_name, cmd.result)
+          normal_cmdset_ph2.normal_command_logs << NormalCommandLog.create(name: cmd.name, result: result.presence || cmd.result)
+        end
+
+        diff_summary = ps.compare_command_sets(normal_cmdset_ph2, anomaly_cmdset_ph2)
+        compset = ComparisonSet.create(ticket_id: @ticket.id, phase: 'removed_flow_values', diff_summary: diff_summary)
+
+        anomaly_cmdset_ph2.anomaly_command_logs.each do |anomaly_log|
+          normal_log = normal_cmdset_ph2.normal_command_logs.find_by(name: anomaly_log.name)
+          next if normal_log.blank?
+          diff = ps.compare_command(normal_log, anomaly_log)
+          compset.comparison_units << ComparisonUnit.create(ticket_id: @ticket.id, name: anomaly_log.name, diff: diff)
         end
       end
     end

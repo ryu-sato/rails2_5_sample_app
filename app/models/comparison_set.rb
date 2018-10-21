@@ -15,6 +15,7 @@
 
 class ComparisonSet < ApplicationRecord
   belongs_to :ticket
+  has_many :comparison_units, inverse_of: :comparison_set
 
   def to_s
     normal_command_log_set = Ticket.preload(normal_log_raw: :normal_command_log_sets)

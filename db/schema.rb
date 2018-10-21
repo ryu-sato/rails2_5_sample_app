@@ -91,7 +91,9 @@ ActiveRecord::Schema.define(version: 2018_10_21_073342) do
     t.string "diff", null: false
     t.string "name", null: false
     t.integer "ticket_id"
+    t.integer "comparison_set_id"
     t.integer "lock_version", default: 0
+    t.index ["comparison_set_id"], name: "index_comparison_units_on_comparison_set_id"
     t.index ["ticket_id"], name: "index_comparison_units_on_ticket_id"
   end
 
