@@ -19,7 +19,7 @@
 <h2><%= ComparisonUnit.model_name.human.titleize %></h2>
 <dl>
   <% @comparison_units.each do |comparison_unit| %>
-    <li><%= link_to comparison_unit.name, comparison_set_path(comparison_unit) %></li>
+    <li><%= link_to comparison_unit.name, comparison_unit_path(comparison_unit) %></li>
   <% end %>
 </dl>
 

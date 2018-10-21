@@ -1,0 +1,10 @@
+<dt><%= Ticket.model_name.human.titleize %></dt>
+<dd><%= link_to Ticket.find(@comparison_unit.ticket_id), ticket_path(@comparison_unit.ticket_id) %></dd>
+<dt><%= ComparisonUnit.human_attribute_name('name') %></dt>
+<dd><%= @comparison_unit.name %></dd>
+<dt><%= ComparisonUnit.human_attribute_name('diff') %></dt>
+<dd>
+<pre>
+<%= @comparison_unit.diff %>
+</pre>
+</dd>

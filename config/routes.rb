@@ -10,4 +10,5 @@ Rails.application.routes.draw do
   resources :anomaly_log_raws, only: [:index, :new, :create, :destroy]
 
   resources :comparison_sets, only: [:show]
+  resources :comparison_units, only: [:show]
 end
