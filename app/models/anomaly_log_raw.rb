@@ -14,4 +14,9 @@ class AnomalyLogRaw < ApplicationRecord
   has_one_attached :raw_log
 
   validates :anomaly_command_log_sets, length: { maximum: 2 }
+  validates :hostname, presence: true, uniqueness: true
+
+  def to_s
+    "#{hostname} in anomaly"
+  end
 end
