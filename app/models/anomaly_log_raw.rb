@@ -8,4 +8,10 @@
 #
 
 class AnomalyLogRaw < ApplicationRecord
+  has_many :tickets, inverse_of: :anomaly_log_raw
+  has_many :anomaly_command_log_sets, inverse_of: :anomaly_log_raw
+
+  has_one_attached :raw_log
+
+  validates :anomaly_command_log_sets, length: { maximum: 2 }
 end

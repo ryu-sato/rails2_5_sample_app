@@ -8,4 +8,10 @@
 #
 
 class NormalLogRaw < ApplicationRecord
+  has_many :tickets, inverse_of: :normal_log_raw
+  has_many :normal_command_log_sets, inverse_of: :normal_log_raw
+
+  has_one_attached :raw_log
+
+  validates :normal_command_log_sets, length: { maximum: 2 }
 end

@@ -10,4 +10,7 @@
 #
 
 class AnomalyCommandLogSet < ApplicationRecord
+  belongs_to :anomaly_log_raw, inverse_of: :anomaly_command_log_sets
+  belongs_to :comparison_set, inverse_of: :anomaly_command_log_set
+  has_many :anomaly_command_logs, inverse_of: :anomaly_command_log_set
 end

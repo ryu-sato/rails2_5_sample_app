@@ -10,4 +10,6 @@
 #
 
 class NormalCommandLog < ApplicationRecord
+  belongs_to :normal_command_log_set, inverse_of: :normal_command_logs
+  belongs_to :comparison_unit, inverse_of: :normal_command_log
 end

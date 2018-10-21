@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_21_073356) do
+ActiveRecord::Schema.define(version: 2018_10_21_073342) do
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string "namespace"
@@ -123,21 +123,15 @@ ActiveRecord::Schema.define(version: 2018_10_21_073356) do
     t.integer "lock_version", default: 0
   end
 
-  create_table "processings", force: :cascade do |t|
-    t.integer "normal_log_raw_id"
-    t.integer "anomaly_log_raw_id"
-    t.integer "lock_version", default: 0
-    t.index ["anomaly_log_raw_id"], name: "index_processings_on_anomaly_log_raw_id"
-    t.index ["normal_log_raw_id"], name: "index_processings_on_normal_log_raw_id"
-  end
-
   create_table "tickets", force: :cascade do |t|
     t.string "code", null: false
     t.string "maker", null: false
     t.string "hostname", null: false
-    t.integer "processing_id"
+    t.integer "normal_log_raw_id"
+    t.integer "anomaly_log_raw_id"
     t.integer "lock_version", default: 0
-    t.index ["processing_id"], name: "index_tickets_on_processing_id"
+    t.index ["anomaly_log_raw_id"], name: "index_tickets_on_anomaly_log_raw_id"
+    t.index ["normal_log_raw_id"], name: "index_tickets_on_normal_log_raw_id"
   end
 
 end
