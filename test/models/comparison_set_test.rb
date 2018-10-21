@@ -2,16 +2,15 @@
 #
 # Table name: comparison_sets
 #
-#  id                         :integer          not null, primary key
-#  diff_summary               :string           not null
-#  lock_version               :integer          default(0)
-#  anomaly_command_log_set_id :integer
-#  normal_command_log_set_id  :integer
+#  id           :integer          not null, primary key
+#  diff_summary :string           not null
+#  lock_version :integer          default(0)
+#  phase        :string           not null
+#  ticket_id    :integer
 #
 # Indexes
 #
-#  index_comparison_sets_on_anomaly_command_log_set_id  (anomaly_command_log_set_id)
-#  index_comparison_sets_on_normal_command_log_set_id   (normal_command_log_set_id)
+#  index_comparison_sets_on_ticket_id  (ticket_id)
 #
 
 require 'test_helper'

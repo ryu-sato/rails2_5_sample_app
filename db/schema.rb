@@ -81,20 +81,18 @@ ActiveRecord::Schema.define(version: 2018_10_21_073342) do
 
   create_table "comparison_sets", force: :cascade do |t|
     t.string "diff_summary", null: false
-    t.integer "normal_command_log_set_id"
-    t.integer "anomaly_command_log_set_id"
+    t.string "phase", null: false
+    t.integer "ticket_id"
     t.integer "lock_version", default: 0
-    t.index ["anomaly_command_log_set_id"], name: "index_comparison_sets_on_anomaly_command_log_set_id"
-    t.index ["normal_command_log_set_id"], name: "index_comparison_sets_on_normal_command_log_set_id"
+    t.index ["ticket_id"], name: "index_comparison_sets_on_ticket_id"
   end
 
   create_table "comparison_units", force: :cascade do |t|
-    t.string "diff_summary", null: false
-    t.integer "normal_command_log_id"
-    t.integer "anomaly_command_log_id"
+    t.string "diff", null: false
+    t.string "name", null: false
+    t.integer "ticket_id"
     t.integer "lock_version", default: 0
-    t.index ["anomaly_command_log_id"], name: "index_comparison_units_on_anomaly_command_log_id"
-    t.index ["normal_command_log_id"], name: "index_comparison_units_on_normal_command_log_id"
+    t.index ["ticket_id"], name: "index_comparison_units_on_ticket_id"
   end
 
   create_table "normal_command_log_sets", force: :cascade do |t|

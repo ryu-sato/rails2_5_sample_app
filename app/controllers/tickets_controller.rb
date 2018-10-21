@@ -12,9 +12,8 @@ class TicketsController < ApplicationController
   # GET /tickets/1
   # GET /tickets/1.json
   def show
-    @comparison_sets = ComparisonSet.where(id: @ticket.normal_log_raw.normal_command_log_set_ids)
-    # [TODO] 実装
-    @comparison_units = []
+    @comparison_sets = ComparisonSet.where(ticket_id: @ticket.id)
+    @comparison_units = ComparisonUnit.where(ticket_id: @ticket.id)
   end
 
   # GET /tickets/new
@@ -88,14 +87,13 @@ class TicketsController < ApplicationController
         end
 
         diff_summary = ps.compare_command_sets(normal_cmdset, anomaly_cmdset)
-        ComparisonSet.create(diff_summary: diff_summary,
-                               anomaly_command_log_set_id: anomaly_cmdset.id,
-                               normal_command_log_set_id: normal_cmdset.id)
+        ComparisonSet.create(ticket_id: @ticket.id, phase: 'parsed_and_no_unused_values', diff_summary: diff_summary)
 
         anomaly_cmdset.anomaly_command_logs.each do |anomaly_log|
           normal_log = normal_cmdset.normal_command_logs.find_by(name: anomaly_log.name)
           next if normal_log.blank?
           diff = ps.compare_command(normal_log, anomaly_log)
+          ComparisonUnit.create(ticket_id: @ticket.id, name: anomaly_log.name, diff: diff)
         end
       end
     end
