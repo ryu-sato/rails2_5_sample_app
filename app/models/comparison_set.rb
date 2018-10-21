@@ -15,8 +15,8 @@
 #
 
 class ComparisonSet < ApplicationRecord
-  has_one :normal_command_log_set, inverse_of: :comparison_set
-  has_one :anomaly_command_log_set, inverse_of: :comparison_set
+  belongs_to :normal_command_log_set
+  belongs_to :anomaly_command_log_set
 
   def phase
     "#{normal_command_log_set.phase} / #{anomaly_command_log_set.phase}"

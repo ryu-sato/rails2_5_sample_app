@@ -1,7 +1,7 @@
 class TicketsController < ApplicationController
   before_action :set_ticket, only: [:destroy]
   before_action :set_ticket_with_preload, only: [:show]
-  before_action :generate_comparison, only: [:show]
+  before_action :generate_comparison_if_not_exist, only: [:show]
 
   # GET /tickets
   # GET /tickets.json
@@ -64,28 +64,38 @@ class TicketsController < ApplicationController
       params.require(:ticket).permit(:code, :maker, :hostname, :normal_log_raw_id, :anomaly_log_raw_id)
     end
 
-    def generate_comparison
+    def generate_comparison_if_not_exist
       ps = ProcessorService.instance
 
       ActiveRecord::Base.transaction do
+        @ticket.normal_log_raw.normal_command_log_sets.destroy
+        @ticket.anomaly_log_raw.anomaly_command_log_sets.destroy
+
         blob = @ticket.anomaly_log_raw.raw_log.blob
         log_content = IO.read(blob.service.send(:path_for, blob.key))
-        anomaly_cmdset = AnomalyCommandLogSet.create(
-          phase: 'parsed_and_no_unused_values',
-          anomaly_log_raw: @ticket.anomaly_log_raw
-        )
+        anomaly_cmdset = AnomalyCommandLogSet.create(phase: 'parsed_and_no_unused_values',
+                                                       anomaly_log_raw: @ticket.anomaly_log_raw)
         ps.parse_commands(log_content).each do |hash|
           anomaly_cmdset.anomaly_command_logs << AnomalyCommandLog.create(name: hash[:name], result: hash[:result])
         end
 
         blob = @ticket.normal_log_raw.raw_log.blob
         log_content = IO.read(blob.service.send(:path_for, blob.key))
-        normal_cmdset = NormalCommandLogSet.create(
-          phase: 'parsed_and_no_unused_values',
-          normal_log_raw: @ticket.normal_log_raw
-        )
+        normal_cmdset = NormalCommandLogSet.create(phase: 'parsed_and_no_unused_values',
+                                                     normal_log_raw: @ticket.normal_log_raw)
         ps.parse_commands(log_content).each do |hash|
           normal_cmdset.normal_command_logs << NormalCommandLog.create(name: hash[:name], result: hash[:result])
+        end
+
+        diff_summary = ps.compare_command_sets(normal_cmdset, anomaly_cmdset)
+        ComparisonSet.create(diff_summary: diff_summary,
+                               anomaly_command_log_set_id: anomaly_cmdset.id,
+                               normal_command_log_set_id: normal_cmdset.id)
+
+        anomaly_cmdset.anomaly_command_logs.each do |anomaly_log|
+          normal_log = normal_cmdset.normal_command_logs.find_by(name: anomaly_log.name)
+          next if normal_log.blank?
+          diff = ps.compare_command(normal_log, anomaly_log)
         end
       end
     end

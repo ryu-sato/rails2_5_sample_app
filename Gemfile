@@ -69,3 +69,5 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 # ACtiveAdmin (https://github.com/activeadmin/activeadmin)
 gem 'activeadmin', '~> 1.3.1'
 gem 'devise'
+
+gem 'diffy', '~> 3.2.1'

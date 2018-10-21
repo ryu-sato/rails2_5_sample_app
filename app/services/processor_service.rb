@@ -20,4 +20,14 @@ class ProcessorService
         }
       end
   end
+
+  def compare_command_sets(normal_cmdset, anomaly_cmdset)
+    normal_log_string = normal_cmdset.normal_command_logs.map(&:result).join
+    anomaly_log_string = anomaly_cmdset.anomaly_command_logs.map(&:result).join
+    Diffy::Diff.new(normal_log_string, anomaly_log_string)
+  end
+
+  def compare_command(normal_log, anomaly_log)
+    Diffy::Diff.new(normal_log.result, anomaly_log.result)
+  end
 end

@@ -15,8 +15,8 @@
 #
 
 class ComparisonUnit < ApplicationRecord
-  has_one :normal_command_log, inverse_of: :comparison_unit
-  has_one :anomaly_command_log, inverse_of: :comparison_unit
+  belongs_to :normal_command_log
+  belongs_to :anomaly_command_log
 
   def name
     "#{normal_command_log.name} / #{anomaly_command_log.name}"
