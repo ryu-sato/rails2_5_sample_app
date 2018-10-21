@@ -12,6 +12,10 @@ class TicketsController < ApplicationController
   # GET /tickets/1
   # GET /tickets/1.json
   def show
+    @comparison_sets = ComparisonSet.where(id: @ticket.normal_log_raw.normal_command_log_set_ids)
+    # [TODO] 実装
+    @comparison_units = []
+binding.pry
   end
 
   # GET /tickets/new
@@ -52,7 +56,7 @@ class TicketsController < ApplicationController
     end
 
     def set_ticket_with_preload
-      @ticket = Ticket.preload(normal_log_raw: [normal_command_log_sets: [comparison_sets: :comparison_units]])
+      @ticket = Ticket.preload(normal_log_raw: :normal_command_log_sets)
                   .find(params[:id])
     end
 
@@ -62,6 +66,17 @@ class TicketsController < ApplicationController
     end
 
     def generate_comparison
-      
+      require 'net/https'
+
+      ps = ProcessorService.instance
+      blob = @ticket.anomaly_log_raw.raw_log.blob
+      log_content = IO.read(blob.service.send(:path_for, blob.key))
+      ActiveRecord::Base.transaction do
+        anomaly_cmdset = AnomalyCommandLogSet.create(
+          phase: 'parsed_and_no_unused_values',
+          anomaly_log_raw: @ticket.anomaly_log_raw
+        )
+        anomaly_cmdset.anomaly_command_logs = ps.parse_commands(log_content)
+      end
     end
 end

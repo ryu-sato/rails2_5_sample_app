@@ -60,21 +60,18 @@ ActiveRecord::Schema.define(version: 2018_10_21_073342) do
   end
 
   create_table "anomaly_command_log_sets", force: :cascade do |t|
-    t.string "type", null: false
+    t.string "phase", null: false
     t.integer "anomaly_log_raw_id"
-    t.integer "comparison_set_id"
     t.integer "lock_version", default: 0
     t.index ["anomaly_log_raw_id"], name: "index_anomaly_command_log_sets_on_anomaly_log_raw_id"
-    t.index ["comparison_set_id"], name: "index_anomaly_command_log_sets_on_comparison_set_id"
   end
 
   create_table "anomaly_command_logs", force: :cascade do |t|
     t.string "name", null: false
+    t.string "result", null: false
     t.integer "anomaly_command_log_set_id"
-    t.integer "comparison_unit_id"
     t.integer "lock_version", default: 0
     t.index ["anomaly_command_log_set_id"], name: "index_anomaly_command_logs_on_anomaly_command_log_set_id"
-    t.index ["comparison_unit_id"], name: "index_anomaly_command_logs_on_comparison_unit_id"
   end
 
   create_table "anomaly_log_raws", force: :cascade do |t|
@@ -101,20 +98,17 @@ ActiveRecord::Schema.define(version: 2018_10_21_073342) do
   end
 
   create_table "normal_command_log_sets", force: :cascade do |t|
-    t.string "type", null: false
+    t.string "phase", null: false
     t.integer "normal_log_raw_id"
-    t.integer "comparison_set_id"
     t.integer "lock_version", default: 0
-    t.index ["comparison_set_id"], name: "index_normal_command_log_sets_on_comparison_set_id"
     t.index ["normal_log_raw_id"], name: "index_normal_command_log_sets_on_normal_log_raw_id"
   end
 
   create_table "normal_command_logs", force: :cascade do |t|
     t.string "name", null: false
+    t.string "result", null: false
     t.integer "normal_command_log_set_id"
-    t.integer "comparison_unit_id"
     t.integer "lock_version", default: 0
-    t.index ["comparison_unit_id"], name: "index_normal_command_logs_on_comparison_unit_id"
     t.index ["normal_command_log_set_id"], name: "index_normal_command_logs_on_normal_command_log_set_id"
   end
 

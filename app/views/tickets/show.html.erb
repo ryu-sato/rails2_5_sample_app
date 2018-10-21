@@ -10,19 +10,17 @@
 <dd><%= link_to @ticket.anomaly_log_raw, rails_blob_path(@ticket.anomaly_log_raw.raw_log, disposition: "attachment") %></dd>
 
 <h2><%= ComparisonSet.model_name.human.titleize %></h2>
-<% anomaly_cmdsets = @ticket.anomaly_log_raw&.anomaly_command_log_sets %>
-<% if anomaly_cmdsets.present? %>
-  <% anomaly_cmdsets.each do |anomaly_cmdset| %>
-    <%= link_to anomaly_cmdset.type, comparison_set_path(anomaly_cmdset.comparison_set) %>
+<dl>
+  <% @comparison_sets.each do |comparison_set| %>
+    <li><%= link_to comparison_set.phase, comparison_set_path(comparison_set) %></li>
   <% end %>
-<% end %>
+</dl>
 
 <h2><%= ComparisonUnit.model_name.human.titleize %></h2>
-<% anomaly_cmdlogs = @ticket.anomaly_log_raw&.anomaly_command_log_sets&.pluck(:anomaly_command_logs) %>
-<% if anomaly_cmdlogs.present? %>
-  <% anomaly_cmdlogs.each do |anomaly_cmdlog| %>
-    <%= link_to anomaly_cmdlog.name, comparison_set_path(anomaly_cmdlog.comparison_unit) %>
+<dl>
+  <% @comparison_units.each do |comparison_unit| %>
+    <li><%= link_to comparison_unit.name, comparison_set_path(comparison_unit) %></li>
   <% end %>
-<% end %>
+</dl>
 
 <%= link_to 'Back', tickets_path %>
