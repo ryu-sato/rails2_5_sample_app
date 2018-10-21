@@ -27,8 +27,13 @@
   </div>
 
   <div>
-    <%= f.label :raw_anomaly_log %>
-    <%= f.file_field :raw_anomaly_log, multiple: false, direct_upload: true, required: true %>
+    <%= f.label :normal_log_raw %>
+    <%= f.collection_select :normal_log_raw_id, NormalLogRaw.all, :id, :to_s %>
+  </div>
+
+  <div>
+    <%= f.label :anomaly_log_raw %>
+    <%= f.collection_select :anomaly_log_raw_id, AnomalyLogRaw.all, :id, :to_s %>
   </div>
 
   <div class="actions">

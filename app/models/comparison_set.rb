@@ -4,9 +4,14 @@
 #
 #  id                         :integer          not null, primary key
 #  diff_summary               :string           not null
-#  normal_command_log_set_id  :integer
-#  anomaly_command_log_set_id :integer
 #  lock_version               :integer          default(0)
+#  anomaly_command_log_set_id :integer
+#  normal_command_log_set_id  :integer
+#
+# Indexes
+#
+#  index_comparison_sets_on_anomaly_command_log_set_id  (anomaly_command_log_set_id)
+#  index_comparison_sets_on_normal_command_log_set_id   (normal_command_log_set_id)
 #
 
 class ComparisonSet < ApplicationRecord
