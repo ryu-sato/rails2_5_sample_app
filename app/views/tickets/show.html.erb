@@ -5,9 +5,9 @@
 <dt><%= Ticket.human_attribute_name('hostname') %></dt>
 <dd><%= @ticket.hostname %></dd>
 <dt><%= Ticket.human_attribute_name('normal_log_raw') %><dt>
-<dd><%= @ticket.normal_log_raw %></dd>
+<dd><%= link_to @ticket.normal_log_raw, rails_blob_path(@ticket.normal_log_raw.raw_log, disposition: "attachment") %></dd>
 <dt><%= Ticket.human_attribute_name('anomaly_log_raw') %></dt>
-<dd><%= link_to "anomaly_log_raw", rails_blob_path(@ticket.anomaly_log_raw.raw_log, disposition: "attachment") %></dd>
+<dd><%= link_to @ticket.anomaly_log_raw, rails_blob_path(@ticket.anomaly_log_raw.raw_log, disposition: "attachment") %></dd>
 
 <h2><%= ComparisonSet.model_name.human.titleize %></h2>
 <% anomaly_cmdsets = @ticket.anomaly_log_raw&.anomaly_command_log_sets %>
