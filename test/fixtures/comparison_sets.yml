@@ -1,3 +1,14 @@
+# == Schema Information
+#
+# Table name: comparison_sets
+#
+#  id                         :integer          not null, primary key
+#  diff_summary               :string           not null
+#  normal_command_log_set_id  :integer
+#  anomaly_command_log_set_id :integer
+#  lock_version               :integer          default(0)
+#
+
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 # This model initially had no columns defined. If you add columns to the
