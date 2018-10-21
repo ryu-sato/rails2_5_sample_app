@@ -10,8 +10,8 @@ class TicketsController < ApplicationController
   # GET /tickets/1
   # GET /tickets/1.json
   def show
-    @comparison_sets_when_flow_values_exists = @ticket.comparison_sets.find_by(name: 'when_flow_values_exists') || []
-    @comparison_sets_when_flow_values_are_removed = @ticket.comparison_sets.find_by(name: 'when_flow_values_are_removed') || []
+    @comparison_sets_when_flow_values_exists = @ticket.comparison_sets.find_by(name: 'when_flow_values_exists').presence || []
+    @comparison_sets_when_flow_values_are_removed = @ticket.comparison_sets.find_by(name: 'when_flow_values_are_removed').presence || []
   end
 
   # GET /tickets/new
