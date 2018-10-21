@@ -8,5 +8,6 @@ Rails.application.routes.draw do
   resources :tickets, only: [:index, :show, :new, :create]
   resources :normal_log_raws, only: [:index, :new, :create, :destroy]
   resources :anomaly_log_raws, only: [:index, :new, :create, :destroy]
+
   resources :comparison_sets, only: [:show]
 end
