@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ComparisonTest < ActiveSupport::TestCase
+class ProcessingTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

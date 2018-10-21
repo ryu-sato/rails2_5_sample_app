@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class CommandLogTest < ActiveSupport::TestCase
+class ComparisonUnitTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

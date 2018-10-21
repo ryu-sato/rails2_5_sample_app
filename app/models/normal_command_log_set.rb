@@ -1,0 +1,2 @@
+class NormalCommandLogSet < ApplicationRecord
+end

@@ -1,8 +1,9 @@
 class Ticket < ApplicationRecord
   before_save :upcase_code
+  before_save :downcase_maker
 
-  has_one :raw_normal_log, class_name: 'RawCommandLogSet', inverse_of: :ticket
-  has_one_attached :raw_anomaly_log
+  has_one :command_log_set, as: :normal_command_log_set, inverse_of: :ticket
+  has_one :raw_command_log_set, as: :anomaly_command_log_set, inverse_of: :ticket
 
   has_many :comparison_sets
 
@@ -20,5 +21,9 @@ class Ticket < ApplicationRecord
   private
     def upcase_code
       self.code = code.upcase
+    end
+
+    def downcase_maker
+      self.maker = maker.downcase
     end
 end

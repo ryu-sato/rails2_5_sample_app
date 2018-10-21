@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class RawCommandLogSetTest < ActiveSupport::TestCase
+class NormalLogRawTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

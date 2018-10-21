@@ -1,0 +1,2 @@
+class AnomalyLogRaw < ApplicationRecord
+end

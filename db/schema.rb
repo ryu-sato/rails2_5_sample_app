@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_21_051954) do
+ActiveRecord::Schema.define(version: 2018_10_21_073356) do
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string "namespace"
@@ -59,65 +59,85 @@ ActiveRecord::Schema.define(version: 2018_10_21_051954) do
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
   end
 
-  create_table "command_log_sets", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "hostname", null: false
+  create_table "anomaly_command_log_sets", force: :cascade do |t|
+    t.string "type", null: false
+    t.integer "anomaly_log_raw_id"
+    t.integer "comparison_set_id"
     t.integer "lock_version", default: 0
-    t.index [nil], name: "index_command_log_sets_on_ticket_id"
+    t.index ["anomaly_log_raw_id"], name: "index_anomaly_command_log_sets_on_anomaly_log_raw_id"
+    t.index ["comparison_set_id"], name: "index_anomaly_command_log_sets_on_comparison_set_id"
   end
 
-  create_table "command_logs", force: :cascade do |t|
+  create_table "anomaly_command_logs", force: :cascade do |t|
     t.string "name", null: false
-    t.string "result", default: "", null: false
-    t.integer "command_log_set_id"
+    t.integer "anomaly_command_log_set_id"
+    t.integer "comparison_unit_id"
     t.integer "lock_version", default: 0
-    t.index ["command_log_set_id"], name: "index_command_logs_on_command_log_set_id"
+    t.index ["anomaly_command_log_set_id"], name: "index_anomaly_command_logs_on_anomaly_command_log_set_id"
+    t.index ["comparison_unit_id"], name: "index_anomaly_command_logs_on_comparison_unit_id"
+  end
+
+  create_table "anomaly_log_raws", force: :cascade do |t|
+    t.string "hostname", null: false
+    t.integer "lock_version", default: 0
   end
 
   create_table "comparison_sets", force: :cascade do |t|
+    t.string "diff_summary", null: false
+    t.integer "normal_command_log_set_id"
+    t.integer "anomaly_command_log_set_id"
+    t.integer "lock_version", default: 0
+    t.index ["anomaly_command_log_set_id"], name: "index_comparison_sets_on_anomaly_command_log_set_id"
+    t.index ["normal_command_log_set_id"], name: "index_comparison_sets_on_normal_command_log_set_id"
+  end
+
+  create_table "comparison_units", force: :cascade do |t|
+    t.string "diff_summary", null: false
+    t.integer "normal_command_log_id"
+    t.integer "anomaly_command_log_id"
+    t.integer "lock_version", default: 0
+    t.index ["anomaly_command_log_id"], name: "index_comparison_units_on_anomaly_command_log_id"
+    t.index ["normal_command_log_id"], name: "index_comparison_units_on_normal_command_log_id"
+  end
+
+  create_table "normal_command_log_sets", force: :cascade do |t|
+    t.string "type", null: false
+    t.integer "normal_log_raw_id"
+    t.integer "comparison_set_id"
+    t.integer "lock_version", default: 0
+    t.index ["comparison_set_id"], name: "index_normal_command_log_sets_on_comparison_set_id"
+    t.index ["normal_log_raw_id"], name: "index_normal_command_log_sets_on_normal_log_raw_id"
+  end
+
+  create_table "normal_command_logs", force: :cascade do |t|
     t.string "name", null: false
-    t.string "difference", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "ticket_id"
-    t.integer "normal_log_set_id"
-    t.integer "anomaly_log_set_id"
+    t.integer "normal_command_log_set_id"
+    t.integer "comparison_unit_id"
     t.integer "lock_version", default: 0
-    t.index ["anomaly_log_set_id"], name: "index_comparison_sets_on_anomaly_log_set_id"
-    t.index ["normal_log_set_id"], name: "index_comparison_sets_on_normal_log_set_id"
-    t.index ["ticket_id"], name: "index_comparison_sets_on_ticket_id"
+    t.index ["comparison_unit_id"], name: "index_normal_command_logs_on_comparison_unit_id"
+    t.index ["normal_command_log_set_id"], name: "index_normal_command_logs_on_normal_command_log_set_id"
   end
 
-  create_table "comparisons", force: :cascade do |t|
-    t.string "difference", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "ticket_id"
-    t.integer "normal_log_id"
-    t.integer "anomaly_log_id"
-    t.integer "lock_version", default: 0
-    t.index ["anomaly_log_id"], name: "index_comparisons_on_anomaly_log_id"
-    t.index ["normal_log_id"], name: "index_comparisons_on_normal_log_id"
-    t.index ["ticket_id"], name: "index_comparisons_on_ticket_id"
-  end
-
-  create_table "raw_command_log_sets", force: :cascade do |t|
+  create_table "normal_log_raws", force: :cascade do |t|
     t.string "hostname", null: false
-    t.boolean "is_normal", default: false, null: false
-    t.integer "ticket_id"
-    t.integer "command_log_set_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.integer "lock_version", default: 0
-    t.index ["command_log_set_id"], name: "index_raw_command_log_sets_on_command_log_set_id"
-    t.index ["ticket_id"], name: "index_raw_command_log_sets_on_ticket_id"
+  end
+
+  create_table "processings", force: :cascade do |t|
+    t.integer "normal_log_raw_id"
+    t.integer "anomaly_log_raw_id"
+    t.integer "lock_version", default: 0
+    t.index ["anomaly_log_raw_id"], name: "index_processings_on_anomaly_log_raw_id"
+    t.index ["normal_log_raw_id"], name: "index_processings_on_normal_log_raw_id"
   end
 
   create_table "tickets", force: :cascade do |t|
     t.string "code", null: false
     t.string "maker", null: false
     t.string "hostname", null: false
+    t.integer "processing_id"
     t.integer "lock_version", default: 0
+    t.index ["processing_id"], name: "index_tickets_on_processing_id"
   end
 
 end
