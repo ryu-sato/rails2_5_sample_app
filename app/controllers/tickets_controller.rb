@@ -27,7 +27,7 @@ class TicketsController < ApplicationController
   # POST /tickets.json
   def create
     @ticket = Ticket.new(ticket_params)
-    @ticket.normal_log = CommandLogSet.find_by(hostname: @ticket.hostname, is_normal: true)
+    @ticket.raw_normal_log = RawCommandLogSet.find_by(hostname: @ticket.hostname, is_normal: true)
 
     respond_to do |format|
       if @ticket.save

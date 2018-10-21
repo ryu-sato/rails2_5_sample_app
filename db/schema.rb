@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_21_041954) do
+ActiveRecord::Schema.define(version: 2018_10_21_051954) do
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string "namespace"
@@ -62,10 +62,8 @@ ActiveRecord::Schema.define(version: 2018_10_21_041954) do
   create_table "command_log_sets", force: :cascade do |t|
     t.string "name", null: false
     t.string "hostname", null: false
-    t.boolean "is_normal", default: false, null: false
-    t.integer "ticket_id"
     t.integer "lock_version", default: 0
-    t.index ["ticket_id"], name: "index_command_log_sets_on_ticket_id"
+    t.index [nil], name: "index_command_log_sets_on_ticket_id"
   end
 
   create_table "command_logs", force: :cascade do |t|
@@ -101,6 +99,18 @@ ActiveRecord::Schema.define(version: 2018_10_21_041954) do
     t.index ["anomaly_log_id"], name: "index_comparisons_on_anomaly_log_id"
     t.index ["normal_log_id"], name: "index_comparisons_on_normal_log_id"
     t.index ["ticket_id"], name: "index_comparisons_on_ticket_id"
+  end
+
+  create_table "raw_command_log_sets", force: :cascade do |t|
+    t.string "hostname", null: false
+    t.boolean "is_normal", default: false, null: false
+    t.integer "ticket_id"
+    t.integer "command_log_set_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "lock_version", default: 0
+    t.index ["command_log_set_id"], name: "index_raw_command_log_sets_on_command_log_set_id"
+    t.index ["ticket_id"], name: "index_raw_command_log_sets_on_ticket_id"
   end
 
   create_table "tickets", force: :cascade do |t|

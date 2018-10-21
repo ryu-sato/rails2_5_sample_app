@@ -1,13 +1,11 @@
-<p id="notice"><%= notice %></p>
-
 <dt><%= Ticket.human_attribute_name('code') %></dt>
 <dd><%= @ticket.code %></dd>
 <dt><%= Ticket.human_attribute_name('maker') %></dt>
 <dd><%= @ticket.maker %></dd>
 <dt><%= Ticket.human_attribute_name('hostname') %></dt>
 <dd><%= @ticket.hostname %></dd>
-<dt><%= Ticket.human_attribute_name('normal_log') %><dt>
-<dd><%= @ticket.normal_log %></dd>
+<dt><%= Ticket.human_attribute_name('raw_normal_log') %><dt>
+<dd><%= @ticket.raw_normal_log %></dd>
 <dt><%= Ticket.human_attribute_name('raw_anomaly_log') %></dt>
 <dd><%= link_to 'raw_anomaly_log', rails_blob_path(@ticket.raw_anomaly_log, disposition: "raw_anomaly_log") %></dd>
 

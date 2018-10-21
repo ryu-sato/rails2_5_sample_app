@@ -1,7 +1,7 @@
 class Ticket < ApplicationRecord
   before_save :upcase_code
 
-  has_one :normal_log, class_name: 'CommandLogSet', inverse_of: :ticket
+  has_one :raw_normal_log, class_name: 'RawCommandLogSet', inverse_of: :ticket
   has_one_attached :raw_anomaly_log
 
   has_many :comparison_sets

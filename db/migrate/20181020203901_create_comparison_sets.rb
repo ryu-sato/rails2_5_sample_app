@@ -15,7 +15,7 @@ class CreateComparisonSets < ActiveRecord::Migration[5.2]
     add_index :comparison_sets, :normal_log_set_id
     add_index :comparison_sets, :anomaly_log_set_id
     add_foreign_key :comparison_sets, :tickets
-    add_foreign_key :comparison_sets, :command_logs, column: :normal_log_set_id
-    add_foreign_key :comparison_sets, :command_logs, column: :anomaly_log_set_id
+    add_foreign_key :comparison_sets, :command_log_sets, column: :normal_log_set_id
+    add_foreign_key :comparison_sets, :command_log_sets, column: :anomaly_log_set_id
   end
 end
