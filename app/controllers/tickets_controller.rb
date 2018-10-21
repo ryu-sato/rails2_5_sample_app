@@ -1,5 +1,7 @@
 class TicketsController < ApplicationController
-  before_action :set_ticket, only: [:edit, :update, :destroy]
+  before_action :set_ticket, only: [:destroy]
+  before_action :set_ticket_with_preload, only: [:show]
+  before_action :generate_comparison, only: [:show]
 
   # GET /tickets
   # GET /tickets.json
@@ -10,17 +12,11 @@ class TicketsController < ApplicationController
   # GET /tickets/1
   # GET /tickets/1.json
   def show
-    @ticket = Ticket.preload(normal_log_raw: [normal_command_log_sets: [comparison_sets: :comparison_units]])
-                .find(params[:id])
   end
 
   # GET /tickets/new
   def new
     @ticket = Ticket.new
-  end
-
-  # GET /tickets/1/edit
-  def edit
   end
 
   # POST /tickets
@@ -34,20 +30,6 @@ class TicketsController < ApplicationController
         format.json { render :show, status: :created, location: @ticket }
       else
         format.html { render :new }
-        format.json { render json: @ticket.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # PATCH/PUT /tickets/1
-  # PATCH/PUT /tickets/1.json
-  def update
-    respond_to do |format|
-      if @ticket.update(ticket_params)
-        format.html { redirect_to @ticket, notice: 'Ticket was successfully updated.' }
-        format.json { render :show, status: :ok, location: @ticket }
-      else
-        format.html { render :edit }
         format.json { render json: @ticket.errors, status: :unprocessable_entity }
       end
     end
@@ -69,8 +51,17 @@ class TicketsController < ApplicationController
       @ticket = Ticket.find(params[:id])
     end
 
+    def set_ticket_with_preload
+      @ticket = Ticket.preload(normal_log_raw: [normal_command_log_sets: [comparison_sets: :comparison_units]])
+                  .find(params[:id])
+    end
+
     # Never trust parameters from the scary internet, only allow the white list through.
     def ticket_params
       params.require(:ticket).permit(:code, :maker, :hostname, :normal_log_raw_id, :anomaly_log_raw_id)
+    end
+
+    def generate_comparison
+      
     end
 end
