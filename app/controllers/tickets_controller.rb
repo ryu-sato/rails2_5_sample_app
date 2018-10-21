@@ -28,9 +28,10 @@ class TicketsController < ApplicationController
   def create
     @ticket = Ticket.new(ticket_params)
     @ticket.raw_normal_log = RawCommandLogSet.find_by(hostname: @ticket.hostname, is_normal: true)
+    @ticket.errors.add(:raw_normal_log, "ホスト名が#{@ticket.hostname}である正常時ログが見つかりません") if @ticket.raw_normal_log.blank?
 
     respond_to do |format|
-      if @ticket.save
+      if @ticket.errors.blank? && @ticket.save
         format.html { redirect_to @ticket, notice: 'Ticket was successfully created.' }
         format.json { render :show, status: :created, location: @ticket }
       else

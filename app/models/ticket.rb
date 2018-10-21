@@ -7,7 +7,7 @@ class Ticket < ApplicationRecord
   has_many :comparison_sets
 
   VALID_TICKET_REGEX = /(ju|al|ci)-\d{4}-\d{3}/i
-  validates :code, presence: true, format: { with: VALID_TICKET_REGEX }
+  validates :code, uniqueness: true, presence: true, format: { with: VALID_TICKET_REGEX }
   validates :maker, presence: true
   validates :hostname, presence: true
 
