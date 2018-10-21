@@ -23,4 +23,11 @@
   <% end %>
 </dl>
 
+<h2><%= AnomalyCommandLog.model_name.human.titleize %></h2>
+<dl>
+  <% @ticket.anomaly_log_raw&.anomaly_command_log_sets&.map(&:anomaly_command_logs).flatten.each do |cmd_log| %>
+    <li><%= link_to cmd_log.name, anomaly_command_log_path(cmd_log) %>  <%= cmd_log.low_priority? ? '<low_priority>' : '' %></li>
+  <% end %>
+</dl>
+
 <%= link_to 'Back', tickets_path %>

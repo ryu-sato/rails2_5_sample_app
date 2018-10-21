@@ -15,4 +15,8 @@
 
 class NormalCommandLog < ApplicationRecord
   belongs_to :normal_command_log_set, inverse_of: :normal_command_logs
+
+  def low_priority?
+    name =~ /^request support information/
+  end
 end

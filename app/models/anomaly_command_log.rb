@@ -15,4 +15,8 @@
 
 class AnomalyCommandLog < ApplicationRecord
   belongs_to :anomaly_command_log_set, inverse_of: :anomaly_command_logs
+
+  def low_priority?
+    name =~ /^request support information/
+  end
 end

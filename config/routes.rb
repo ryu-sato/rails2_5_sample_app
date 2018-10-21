@@ -11,4 +11,7 @@ Rails.application.routes.draw do
 
   resources :comparison_sets, only: [:show]
   resources :comparison_units, only: [:show]
+
+  resources :normal_command_logs, only: [:show]
+  resources :anomaly_command_logs, only: [:show]
 end

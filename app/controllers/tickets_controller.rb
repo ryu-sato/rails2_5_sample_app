@@ -66,9 +66,16 @@ class TicketsController < ApplicationController
     def generate_comparison_if_not_exist
       ps = ProcessorService.instance
 
+      @comparison_sets = ComparisonSet.where(ticket_id: @ticket.id)
+      @comparison_units = ComparisonUnit.where(ticket_id: @ticket.id)
+
+      return if @comparison_sets.present? && @comparison_units.present?
+
       ActiveRecord::Base.transaction do
-        @ticket.normal_log_raw.normal_command_log_sets.destroy
-        @ticket.anomaly_log_raw.anomaly_command_log_sets.destroy
+        @comparison_sets.destroy_all
+        @comparison_units.destroy_all
+        @ticket.normal_log_raw.normal_command_log_sets.destroy_all
+        @ticket.anomaly_log_raw.anomaly_command_log_sets.destroy_all
 
         blob = @ticket.anomaly_log_raw.raw_log.blob
         log_content = IO.read(blob.service.send(:path_for, blob.key))
