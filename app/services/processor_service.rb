@@ -6,7 +6,7 @@ class ProcessorService
   def parse_commands(log)
     separator = '#####SEPARATOR#####'
 
-    log.gsub(/(.*@)(mx960-01-hon>\s*)/, separator)
+    remove_unused_value(log).gsub(/(.*@)(test-hogehoge>\s*)/, separator)
       .split(separator)
       .inject([]) do |cmd_logs, block|
         result = block.lines
@@ -19,6 +19,10 @@ class ProcessorService
           result: result.join
         }
       end
+  end
+
+  def remove_unused_value(line)
+    line.gsub(/^\[.*[0-9][0-9]:[0-9][0-9]:[0-9][0-9]\..*201[7|8|9]\] /, "")
   end
 
   def compare_command_sets(normal_cmdset, anomaly_cmdset)
