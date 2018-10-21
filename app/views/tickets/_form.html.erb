@@ -11,17 +11,25 @@
     </div>
   <% end %>
 
-  <%= f.label :maker %>
-  <%= f.select :maker, [['Juniper', 'juniper'], ['Alcatel', 'alcatel'], ['Cisco', 'cisco']], required: true, class: 'form-control' %>
+  <div>
+    <%= f.label :maker %>
+    <%= f.select :maker, [['Juniper', 'juniper'], ['Alcatel', 'alcatel'], ['Cisco', 'cisco']], required: true, class: 'form-control' %>
+  </div>
 
-  <%= f.label :code %>
-  <%= f.text_field :code, required: true, class: 'form-control' %>
+  <div>
+    <%= f.label :code %>
+    <%= f.text_field :code, required: true, class: 'form-control' %>
+  </div>
 
-  <%= f.label :hostname %>
-  <%= f.text_field :hostname, required: true, class: 'form-control' %>
+  <div>
+    <%= f.label :hostname %>
+    <%= f.text_field :hostname, required: true, class: 'form-control' %>
+  </div>
 
-  <%= f.label :raw_anomaly_log %>
-  <%= f.file_field :raw_anomaly_log, multiple: false, direct_upload: true, required: true %>
+  <div>
+    <%= f.label :raw_anomaly_log %>
+    <%= f.file_field :raw_anomaly_log, multiple: false, direct_upload: true, required: true %>
+  </div>
 
   <div class="actions">
     <%= f.submit %>
