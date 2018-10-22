@@ -1,20 +1,16 @@
 # == Schema Information
 #
-# Table name: tickets
+# Table name: hosts
 #
 #  id           :integer          not null, primary key
-#  code         :string           not null
 #  lock_version :integer          default(0)
-#  host_id      :integer
-#
-# Indexes
-#
-#  index_tickets_on_host_id  (host_id)
+#  maker        :string           not null
+#  name         :string           not null
 #
 
 require 'test_helper'
 
-class TicketTest < ActiveSupport::TestCase
+class HostTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

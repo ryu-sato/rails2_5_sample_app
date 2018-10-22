@@ -12,8 +12,7 @@ class TicketsController < ApplicationController
   # GET /tickets/1
   # GET /tickets/1.json
   def show
-    @comparison_sets = ComparisonSet.where(ticket_id: @ticket.id)
-    @comparison_units = ComparisonUnit.where(ticket_id: @ticket.id)
+    @diff_sets = DiffSet.where(ticket_id: @ticket.id)
   end
 
   # GET /tickets/new
@@ -24,6 +23,7 @@ class TicketsController < ApplicationController
   # POST /tickets
   # POST /tickets.json
   def create
+
     @ticket = Ticket.new(ticket_params)
 
     respond_to do |format|
@@ -54,81 +54,79 @@ class TicketsController < ApplicationController
     end
 
     def set_ticket_with_preload
-      @ticket = Ticket.preload(normal_log_raw: :normal_command_log_sets)
+      @ticket = Ticket.preload(raw_logs: :command_log_sets)
                   .find(params[:id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def ticket_params
-      params.require(:ticket).permit(:code, :maker, :hostname, :normal_log_raw_id, :anomaly_log_raw_id)
+      params.require(:ticket).permit(:code, :host_id, raw_log_ids: [])
     end
 
     def generate_comparison_if_not_exist
       ps = ProcessorService.instance
-
-      @comparison_sets = ComparisonSet.where(ticket_id: @ticket.id)
-      @comparison_units = ComparisonUnit.where(ticket_id: @ticket.id)
+      @diff_sets = @ticket.diff_sets
 
       # [TODO] 本番では元戻しする (強制再生成するようコメントアウトしている)
-      # return if @comparison_sets.present? && @comparison_units.present?
+      return if @diff_sets.present?
 
       ActiveRecord::Base.transaction do
-        @comparison_sets.destroy_all
-        @comparison_units.destroy_all
-        @ticket.normal_log_raw.normal_command_log_sets.destroy_all
-        @ticket.anomaly_log_raw.anomaly_command_log_sets.destroy_all
+        @diff_sets.destroy_all
+        @ticket.raw_logs.each {|raw_log| raw_log.command_log_sets.destroy_all }
 
-        blob = @ticket.anomaly_log_raw.raw_log.blob
+        blob = @ticket.abnormal_log.raw_log.blob
         log_content = IO.read(blob.service.send(:path_for, blob.key))
-        anomaly_cmdset = AnomalyCommandLogSet.create(phase: 'parsed_and_no_unused_values',
-                                                       anomaly_log_raw: @ticket.anomaly_log_raw)
+        anomaly_cmdset = CommandLogSet.create(phase: 'parsed_and_no_unused_values',
+                                                raw_log: @ticket.abnormal_log)
         ps.parse_commands(log_content).each do |hash|
-          anomaly_cmdset.anomaly_command_logs << AnomalyCommandLog.create(name: hash[:name], result: hash[:result])
+          anomaly_cmdset.command_logs << CommandLog.create(name: hash[:name], result: hash[:result])
         end
 
-        blob = @ticket.normal_log_raw.raw_log.blob
+        blob = @ticket.normal_log.raw_log.blob
         log_content = IO.read(blob.service.send(:path_for, blob.key))
-        normal_cmdset = NormalCommandLogSet.create(phase: 'parsed_and_no_unused_values',
-                                                     normal_log_raw: @ticket.normal_log_raw)
+        normal_cmdset = CommandLogSet.create(phase: 'parsed_and_no_unused_values',
+                                               raw_log: @ticket.normal_log)
         ps.parse_commands(log_content).each do |hash|
-          normal_cmdset.normal_command_logs << NormalCommandLog.create(name: hash[:name], result: hash[:result])
+          normal_cmdset.command_logs << CommandLog.create(name: hash[:name], result: hash[:result])
         end
 
         diff_summary = ps.compare_command_sets(normal_cmdset, anomaly_cmdset)
-        compset = ComparisonSet.create(ticket_id: @ticket.id, phase: 'parsed_and_no_unused_values', diff_summary: diff_summary)
+        diffset = DiffSet.create(ticket_id: @ticket.id, phase: 'parsed_and_no_unused_values', diff_summary: diff_summary)
 
-        anomaly_cmdset.anomaly_command_logs.each do |anomaly_log|
-          normal_log = normal_cmdset.normal_command_logs.find_by(name: anomaly_log.name)
+        anomaly_cmdset.command_logs.each do |anomaly_log|
+          normal_log = normal_cmdset.command_logs.find_by(name: anomaly_log.name)
           next if normal_log.blank?
           diff = ps.compare_command(normal_log, anomaly_log)
-          compset.comparison_units << ComparisonUnit.create(ticket_id: @ticket.id, name: anomaly_log.name, diff: diff)
+          diffset.diff_units << DiffUnit.create(name: anomaly_log.name, diff: diff,
+                                                  normal_log: normal_log.result, abnormal_log: anomaly_log.result)
         end
 
 
-        anomaly_cmdset_ph2 = AnomalyCommandLogSet.create(phase: 'removed_flow_values',
-                                                           anomaly_log_raw: @ticket.anomaly_log_raw)
-        anomaly_cmdset.anomaly_command_logs.each do |cmd|
+        anomaly_cmdset_ph2 = CommandLogSet.create(phase: 'removed_flow_values',
+                                                    raw_log: @ticket.abnormal_log)
+        anomaly_cmdset.command_logs.each do |cmd|
           method_name = ps.replace_method_name(cmd.name)
           result = ps.send(method_name, cmd.result)
-          anomaly_cmdset_ph2.anomaly_command_logs << AnomalyCommandLog.create(name: cmd.name, result: result.presence || cmd.result)
+          anomaly_cmdset_ph2.command_logs << CommandLog.create(name: cmd.name, result: result.presence || cmd.result)
         end
 
-        normal_cmdset_ph2 = NormalCommandLogSet.create(phase: 'removed_flow_values',
-                                                         normal_log_raw: @ticket.normal_log_raw)
-        normal_cmdset.normal_command_logs.each do |cmd|
+        normal_cmdset_ph2 = CommandLogSet.create(phase: 'removed_flow_values',
+                                                   raw_log: @ticket.normal_log)
+        normal_cmdset.command_logs.each do |cmd|
           method_name = ps.replace_method_name(cmd.name)
           result = ps.send(method_name, cmd.result)
-          normal_cmdset_ph2.normal_command_logs << NormalCommandLog.create(name: cmd.name, result: result.presence || cmd.result)
+          normal_cmdset_ph2.command_logs << CommandLog.create(name: cmd.name, result: result.presence || cmd.result)
         end
 
         diff_summary = ps.compare_command_sets(normal_cmdset_ph2, anomaly_cmdset_ph2)
-        compset = ComparisonSet.create(ticket_id: @ticket.id, phase: 'removed_flow_values', diff_summary: diff_summary)
+        diffset2 = DiffSet.create(ticket_id: @ticket.id, phase: 'removed_flow_values', diff_summary: diff_summary)
 
-        anomaly_cmdset_ph2.anomaly_command_logs.each do |anomaly_log|
-          normal_log = normal_cmdset_ph2.normal_command_logs.find_by(name: anomaly_log.name)
+        anomaly_cmdset_ph2.command_logs.each do |anomaly_log|
+          normal_log = normal_cmdset_ph2.command_logs.find_by(name: anomaly_log.name)
           next if normal_log.blank?
           diff = ps.compare_command(normal_log, anomaly_log)
-          compset.comparison_units << ComparisonUnit.create(ticket_id: @ticket.id, name: anomaly_log.name, diff: diff)
+          diffset2.diff_units << DiffUnit.create(name: anomaly_log.name, diff: diff,
+                                                   normal_log: normal_log.result, abnormal_log: anomaly_log.result)
         end
       end
     end

@@ -1,0 +1,10 @@
+<dt><%= Ticket.model_name.human.titleize %></dt>
+<dd><%= link_to Ticket.find(@diff_set.ticket_id), ticket_path(@diff_set.ticket_id) %></dd>
+<dt><%= DiffSet.human_attribute_name('phase') %></dt>
+<dd><%= @diff_set.phase %></dd>
+<dt><%= DiffSet.human_attribute_name('diff_summary') %></dt>
+<dd>
+<pre>
+<%= @diff_set.diff_summary %>
+</pre>
+</dd>

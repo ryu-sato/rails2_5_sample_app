@@ -1,20 +1,20 @@
 # == Schema Information
 #
-# Table name: tickets
+# Table name: command_log_sets
 #
 #  id           :integer          not null, primary key
-#  code         :string           not null
 #  lock_version :integer          default(0)
-#  host_id      :integer
+#  phase        :string           not null
+#  raw_log_id   :integer
 #
 # Indexes
 #
-#  index_tickets_on_host_id  (host_id)
+#  index_command_log_sets_on_raw_log_id  (raw_log_id)
 #
 
 require 'test_helper'
 
-class TicketTest < ActiveSupport::TestCase
+class CommandLogSetTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

@@ -1,0 +1,12 @@
+<dt><%= DiffUnit.human_attribute_name('name') %></dt>
+<dd><%= @diff_unit.name %></dd>
+<dt><%= DiffUnit.human_attribute_name('normal_log') %></dt>
+<dd><pre><%= @diff_unit.normal_log %></pre></dd>
+<dt><%= DiffUnit.human_attribute_name('abnormal_log') %></dt>
+<dd><pre><%= @diff_unit.abnormal_log %></pre></dd>
+<dt><%= DiffUnit.human_attribute_name('diff') %></dt>
+<dd>
+<pre>
+<%= @diff_unit.diff %>
+</pre>
+</dd>

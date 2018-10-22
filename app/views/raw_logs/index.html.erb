@@ -1,0 +1,31 @@
+<h1>Raw Logs</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th><%= RawLog.human_attribute_name('id') %></th>
+      <th><%= RawLog.human_attribute_name('raw_log') %></th>
+      <th><%= RawLog.human_attribute_name('log_type') %></th>
+      <th><%= RawLog.human_attribute_name('acquisition_date') %></th>
+      <th><%= Host.model_name.human.titleize %></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @raw_logs.each do |raw_log| %>
+      <tr>
+        <td><%= link_to raw_log.id, raw_log %></td>
+        <td><%= raw_log.raw_log %></td>
+        <td><%= raw_log.log_type %></td>
+        <td><%= raw_log.acquisition_date %></td>
+        <td><%= raw_log.host %></td>
+        <td><%= link_to 'Destroy', raw_log, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Raw Log', new_raw_log_path %>

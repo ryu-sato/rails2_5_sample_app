@@ -1,15 +1,16 @@
 # == Schema Information
 #
-# Table name: tickets
+# Table name: diff_sets
 #
 #  id           :integer          not null, primary key
-#  code         :string           not null
+#  diff_summary :string           not null
 #  lock_version :integer          default(0)
-#  host_id      :integer
+#  phase        :string           not null
+#  ticket_id    :integer
 #
 # Indexes
 #
-#  index_tickets_on_host_id  (host_id)
+#  index_diff_sets_on_ticket_id  (ticket_id)
 #
 
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html

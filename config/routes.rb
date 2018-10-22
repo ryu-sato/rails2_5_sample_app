@@ -6,12 +6,11 @@ Rails.application.routes.draw do
   root to: 'tickets#index'
 
   resources :tickets, only: [:index, :show, :new, :create]
-  resources :normal_log_raws, only: [:index, :new, :create, :destroy]
-  resources :anomaly_log_raws, only: [:index, :new, :create, :destroy]
 
-  resources :comparison_sets, only: [:show]
-  resources :comparison_units, only: [:show]
+  resources :raw_logs, only: [:index, :new, :create, :destroy]
 
-  resources :normal_command_logs, only: [:show]
-  resources :anomaly_command_logs, only: [:show]
+  resources :diff_sets, only: [:show]
+  resources :diff_units, only: [:show]
+
+  resources :command_logs, only: [:show]
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_21_073342) do
+ActiveRecord::Schema.define(version: 2018_10_22_140753) do
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string "namespace"
@@ -59,73 +59,59 @@ ActiveRecord::Schema.define(version: 2018_10_21_073342) do
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
   end
 
-  create_table "anomaly_command_log_sets", force: :cascade do |t|
+  create_table "command_log_sets", force: :cascade do |t|
     t.string "phase", null: false
-    t.integer "anomaly_log_raw_id"
+    t.integer "raw_log_id"
     t.integer "lock_version", default: 0
-    t.index ["anomaly_log_raw_id"], name: "index_anomaly_command_log_sets_on_anomaly_log_raw_id"
+    t.index ["raw_log_id"], name: "index_command_log_sets_on_raw_log_id"
   end
 
-  create_table "anomaly_command_logs", force: :cascade do |t|
+  create_table "command_logs", force: :cascade do |t|
     t.string "name", null: false
     t.string "result", null: false
-    t.integer "anomaly_command_log_set_id"
+    t.integer "command_log_set_id"
     t.integer "lock_version", default: 0
-    t.index ["anomaly_command_log_set_id"], name: "index_anomaly_command_logs_on_anomaly_command_log_set_id"
+    t.index ["command_log_set_id"], name: "index_command_logs_on_command_log_set_id"
   end
 
-  create_table "anomaly_log_raws", force: :cascade do |t|
-    t.string "hostname", null: false
-    t.integer "lock_version", default: 0
-  end
-
-  create_table "comparison_sets", force: :cascade do |t|
+  create_table "diff_sets", force: :cascade do |t|
     t.string "diff_summary", null: false
     t.string "phase", null: false
     t.integer "ticket_id"
     t.integer "lock_version", default: 0
-    t.index ["ticket_id"], name: "index_comparison_sets_on_ticket_id"
+    t.index ["ticket_id"], name: "index_diff_sets_on_ticket_id"
   end
 
-  create_table "comparison_units", force: :cascade do |t|
-    t.string "diff", null: false
+  create_table "diff_units", force: :cascade do |t|
+    t.string "diff"
+    t.string "name"
+    t.string "normal_log"
+    t.string "abnormal_log"
+    t.integer "diff_set_id"
+    t.index ["diff_set_id"], name: "index_diff_units_on_diff_set_id"
+  end
+
+  create_table "hosts", force: :cascade do |t|
+    t.string "maker", null: false
     t.string "name", null: false
+    t.integer "lock_version", default: 0
+  end
+
+  create_table "raw_logs", force: :cascade do |t|
+    t.string "log_type", null: false
+    t.date "acquisition_date", null: false
+    t.integer "host_id"
     t.integer "ticket_id"
-    t.integer "comparison_set_id"
     t.integer "lock_version", default: 0
-    t.index ["comparison_set_id"], name: "index_comparison_units_on_comparison_set_id"
-    t.index ["ticket_id"], name: "index_comparison_units_on_ticket_id"
-  end
-
-  create_table "normal_command_log_sets", force: :cascade do |t|
-    t.string "phase", null: false
-    t.integer "normal_log_raw_id"
-    t.integer "lock_version", default: 0
-    t.index ["normal_log_raw_id"], name: "index_normal_command_log_sets_on_normal_log_raw_id"
-  end
-
-  create_table "normal_command_logs", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "result", null: false
-    t.integer "normal_command_log_set_id"
-    t.integer "lock_version", default: 0
-    t.index ["normal_command_log_set_id"], name: "index_normal_command_logs_on_normal_command_log_set_id"
-  end
-
-  create_table "normal_log_raws", force: :cascade do |t|
-    t.string "hostname", null: false
-    t.integer "lock_version", default: 0
+    t.index ["host_id"], name: "index_raw_logs_on_host_id"
+    t.index ["ticket_id"], name: "index_raw_logs_on_ticket_id"
   end
 
   create_table "tickets", force: :cascade do |t|
     t.string "code", null: false
-    t.string "maker", null: false
-    t.string "hostname", null: false
-    t.integer "normal_log_raw_id"
-    t.integer "anomaly_log_raw_id"
+    t.integer "host_id"
     t.integer "lock_version", default: 0
-    t.index ["anomaly_log_raw_id"], name: "index_tickets_on_anomaly_log_raw_id"
-    t.index ["normal_log_raw_id"], name: "index_tickets_on_normal_log_raw_id"
+    t.index ["host_id"], name: "index_tickets_on_host_id"
   end
 
 end

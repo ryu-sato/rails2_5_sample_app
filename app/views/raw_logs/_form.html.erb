@@ -1,0 +1,37 @@
+<%= form_with(model: raw_log, local: true) do |f| %>
+  <% if raw_log.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(raw_log.errors.count, "error") %> prohibited this raw_log from being saved:</h2>
+
+      <ul>
+      <% raw_log.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :host %>
+    <%= f.collection_select :host_id, Host.all, :id, :to_s, class: 'form-control' %>
+  </div>
+
+  <div>
+    <%= f.label :log_type %>
+    <%= f.collection_select :log_type, RawLog::VALID_LOG_TYPES, :to_s, :to_s, class: 'form-control' %>
+  </div>
+
+  <div>
+    <%= f.label :raw_log %>
+    <%= f.file_field :raw_log, multiple: false, direct_upload: true %>
+  </div>
+
+  <div>
+    <%= f.label :acquisition_date %>
+    <%= f.date_select :acquisition_date, {}, class: 'form-control' %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

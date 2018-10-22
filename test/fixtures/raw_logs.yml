@@ -1,0 +1,28 @@
+# == Schema Information
+#
+# Table name: raw_logs
+#
+#  id               :integer          not null, primary key
+#  acquisition_date :date             not null
+#  lock_version     :integer          default(0)
+#  log_type         :string           not null
+#  host_id          :integer
+#  ticket_id        :integer
+#
+# Indexes
+#
+#  index_raw_logs_on_host_id    (host_id)
+#  index_raw_logs_on_ticket_id  (ticket_id)
+#
+
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  host: 
+  log_type: MyString
+  acquisition_date: 2018-10-22 14:01:02
+
+two:
+  host: 
+  log_type: MyString
+  acquisition_date: 2018-10-22 14:01:02

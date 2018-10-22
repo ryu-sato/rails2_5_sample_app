@@ -1,33 +1,36 @@
 <dt><%= Ticket.human_attribute_name('code') %></dt>
 <dd><%= @ticket.code %></dd>
-<dt><%= Ticket.human_attribute_name('maker') %></dt>
-<dd><%= @ticket.maker %></dd>
-<dt><%= Ticket.human_attribute_name('hostname') %></dt>
-<dd><%= @ticket.hostname %></dd>
-<dt><%= Ticket.human_attribute_name('normal_log_raw') %><dt>
-<dd><%= link_to @ticket.normal_log_raw, rails_blob_path(@ticket.normal_log_raw.raw_log, disposition: "attachment") %></dd>
-<dt><%= Ticket.human_attribute_name('anomaly_log_raw') %></dt>
-<dd><%= link_to @ticket.anomaly_log_raw, rails_blob_path(@ticket.anomaly_log_raw.raw_log, disposition: "attachment") %></dd>
+<dt><%= Host.model_name.human.titleize %></dt>
+<dd><%= @ticket.host %></dd>
+<dt><%= Ticket.human_attribute_name('raw_logs') %><dt>
+<dd>
+  <%= link_to @ticket.normal_log, rails_blob_path(@ticket.normal_log.raw_log, disposition: "attachment") %>
+  <%= link_to @ticket.abnormal_log, rails_blob_path(@ticket.abnormal_log.raw_log, disposition: "attachment") %>
+</dd>
 
-<h2><%= ComparisonSet.model_name.human.titleize %></h2>
-<dl>
-  <% @comparison_sets.each do |comparison_set| %>
-    <li><%= link_to comparison_set.phase, comparison_set_path(comparison_set) %></li>
-  <% end %>
-</dl>
+<h2><%= DiffSet.model_name.human.titleize %></h2>
 
-<h2><%= ComparisonUnit.model_name.human.titleize %></h2>
-<dl>
-  <% @comparison_units.each do |comparison_unit| %>
-    <li><%= link_to comparison_unit.name, comparison_unit_path(comparison_unit) %></li>
-  <% end %>
-</dl>
-
-<h2><%= AnomalyCommandLog.model_name.human.titleize %></h2>
-<dl>
-  <% @ticket.anomaly_log_raw&.anomaly_command_log_sets&.map(&:anomaly_command_logs).flatten.each do |cmd_log| %>
-    <li><%= link_to cmd_log.name, anomaly_command_log_path(cmd_log) %>  <%= cmd_log.low_priority? ? '<low_priority>' : '' %></li>
-  <% end %>
-</dl>
+<table>
+  <thead>
+    <th>Command name</th>
+    <th>Diff</th>
+  </thead>
+  <tbody>
+    <% @ticket.abnormal_log&.command_log_sets&.each do |command_log_set| %>
+      <tr><td cols=2><%= command_log_set.phase %></td></tr>
+      <% command_log_set.command_logs&.each do |cmd_log| %>
+        <tr>
+          <td><%= link_to cmd_log.name, command_log_path(cmd_log) %>  <%= cmd_log.low_priority? ? '[low_priority]' : '' %></td>
+          <% diff_unit = @diff_sets.find_by(phase: command_log_set.phase).diff_units.find_by(name: cmd_log.name) %>
+          <% if diff_unit.present? %>
+            <td><%= link_to diff_unit, diff_unit_path(diff_unit) %></td>
+          <% else %>
+            <td>no diff</td>
+          <% end %>
+        </tr>
+      <% end %>
+    <% end %>
+  </tbody>
+</table>
 
 <%= link_to 'Back', tickets_path %>

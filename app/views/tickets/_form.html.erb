@@ -12,28 +12,18 @@
   <% end %>
 
   <div>
-    <%= f.label :maker %>
-    <%= f.select :maker, [['Juniper', 'juniper'], ['Alcatel', 'alcatel'], ['Cisco', 'cisco']], required: true, class: 'form-control' %>
-  </div>
-
-  <div>
     <%= f.label :code %>
     <%= f.text_field :code, required: true, class: 'form-control' %>
   </div>
 
   <div>
-    <%= f.label :hostname %>
-    <%= f.text_field :hostname, required: true, class: 'form-control' %>
+    <%= f.label :host %>
+    <%= f.collection_select :host_id, Host.all, :id, :to_s, {}, class: 'form-control' %>
   </div>
 
   <div>
-    <%= f.label :normal_log_raw %>
-    <%= f.collection_select :normal_log_raw_id, NormalLogRaw.all, :id, :to_s %>
-  </div>
-
-  <div>
-    <%= f.label :anomaly_log_raw %>
-    <%= f.collection_select :anomaly_log_raw_id, AnomalyLogRaw.all, :id, :to_s %>
+    <%= f.label :raw_logs %>
+    <%= f.collection_select :raw_log_ids, RawLog.all, :id, :to_s, {}, class: 'form-control', multiple: true %>
   </div>
 
   <div class="actions">

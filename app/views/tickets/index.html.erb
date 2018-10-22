@@ -4,8 +4,7 @@
   <thead>
     <tr>
       <th><%= Ticket.human_attribute_name('code') %></th>
-      <th><%= Ticket.human_attribute_name('maker') %></th>
-      <th><%= Ticket.human_attribute_name('hostname') %></th>
+      <th><%= Host.model_name.human.titleize %></th>
     </tr>
   </thead>
 
@@ -13,8 +12,7 @@
     <% @tickets.each do |ticket| %>
       <tr>
         <td><%= link_to ticket.code, ticket %></td>
-        <td><%= ticket.maker %></td>
-        <td><%= ticket.hostname %></td>
+        <td><%= ticket.host %></td>
       </tr>
     <% end %>
   </tbody>
