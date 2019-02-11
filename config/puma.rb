@@ -32,3 +32,6 @@ environment ENV.fetch("RAILS_ENV") { "development" }
 
 # Allow puma to be restarted by `rails restart` command.
 plugin :tmp_restart
+
+# Apache CommonLogging format でログを出力する(default false と書かれているようだが明示的に quest false を指定しないとログが表示されない)
+quiet false
