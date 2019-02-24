@@ -15,9 +15,9 @@
 class Ticket < ApplicationRecord
   before_save :upcase_code
 
-  belongs_to :host
+  belongs_to :host, inverse_of: :ticket
   has_many :raw_logs, inverse_of: :ticket
-  has_many :diff_sets, inverse_of: :ticket
+  has_many :diff_sets, inverse_of: :ticket, dependent: :destroy
 
   VALID_TICKET_REGEX = /(ju|al|ci)-\d{4}-\d{3}/i
   validates :code, uniqueness: true, presence: true, format: { with: VALID_TICKET_REGEX }
