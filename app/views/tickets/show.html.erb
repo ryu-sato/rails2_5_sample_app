@@ -1,36 +1,50 @@
-<dt><%= Ticket.human_attribute_name('code') %></dt>
-<dd><%= @ticket.code %></dd>
-<dt><%= Host.model_name.human.titleize %></dt>
-<dd><%= @ticket.host %></dd>
-<dt><%= Ticket.human_attribute_name('raw_logs') %><dt>
-<dd>
-  <%= link_to @ticket.normal_log, rails_blob_path(@ticket.normal_log.raw_log, disposition: "attachment") %>
-  <%= link_to @ticket.abnormal_log, rails_blob_path(@ticket.abnormal_log.raw_log, disposition: "attachment") %>
-</dd>
+<% if @ticket.present? %>
+  <dt><%= Ticket.human_attribute_name('code') %></dt>
+  <dd><%= @ticket.code %></dd>
+  <dt><%= Host.model_name.human.titleize %></dt>
+  <dd><%= @ticket.host %></dd>
+  <dt><%= Ticket.human_attribute_name('raw_logs') %><dt>
+  <dd>
+    <%= link_to @ticket.normal_log, rails_blob_path(@ticket.normal_log.raw_log, disposition: "attachment") %>
+    <%= link_to @ticket.abnormal_log, rails_blob_path(@ticket.abnormal_log.raw_log, disposition: "attachment") %>
+  </dd>
 
-<h2><%= DiffSet.model_name.human.titleize %></h2>
+  <h2><%= DiffSet.model_name.human.titleize %></h2>
 
-<table>
-  <thead>
-    <th>Command name</th>
-    <th>Diff</th>
-  </thead>
-  <tbody>
-    <% @ticket.abnormal_log&.command_log_sets&.each do |command_log_set| %>
-      <tr><td cols=2><%= command_log_set.phase %></td></tr>
-      <% command_log_set.command_logs&.each do |cmd_log| %>
-        <tr>
-          <td><%= link_to cmd_log.name, command_log_path(cmd_log) %>  <%= cmd_log.low_priority? ? '[low_priority]' : '' %></td>
-          <% diff_unit = @diff_sets.find_by(phase: command_log_set.phase).diff_units.find_by(name: cmd_log.name) %>
-          <% if diff_unit.present? %>
-            <td><%= link_to diff_unit, diff_unit_path(diff_unit) %></td>
-          <% else %>
-            <td>no diff</td>
-          <% end %>
-        </tr>
+  <table>
+    <thead>
+      <th>Command name</th>
+      <th>Diff</th>
+    </thead>
+    <tbody>
+      <% @ticket.abnormal_log&.command_log_sets&.each do |command_log_set| %>
+        <tr><td cols=2><%= command_log_set.phase %></td></tr>
+        <% command_log_set.command_logs&.each do |cmd_log| %>
+          <tr>
+            <td><%= link_to cmd_log.name, command_log_path(cmd_log) %>  <%= cmd_log.low_priority? ? '[low_priority]' : '' %></td>
+            <% diff_unit = @diff_sets.find_by(phase: command_log_set.phase).diff_units.find_by(name: cmd_log.name) %>
+            <% if diff_unit.present? %>
+              <td><%= link_to diff_unit, diff_unit_path(diff_unit) %></td>
+            <% else %>
+              <td>no diff</td>
+            <% end %>
+          </tr>
+        <% end %>
       <% end %>
-    <% end %>
-  </tbody>
-</table>
+    </tbody>
+  </table>
 
-<%= link_to 'Back', tickets_path %>
+  <%= link_to 'Back', tickets_path %>
+<% else %>
+  <% reload_duration_sec = 5 %>
+  チケットに関連するデータが見つかりませんでした。
+  データが作成されていないか、作成途中です。
+  しばらく経ってから再読み込みしてください。
+  (<%= reload_duration_sec %>秒後に再読み込みされます)
+
+  <script type="text/javascript" language="javascript">
+    setTimeout(function() {
+      window.top.location.reload(true);
+    }, reload_duration_sec * 1000);
+  </script>
+<% end %>

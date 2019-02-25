@@ -15,7 +15,7 @@
 class Ticket < ApplicationRecord
   before_save :upcase_code
 
-  belongs_to :host, inverse_of: :ticket
+  belongs_to :host, inverse_of: :tickets
   has_many :raw_logs, inverse_of: :ticket
   has_many :diff_sets, inverse_of: :ticket, dependent: :destroy
 

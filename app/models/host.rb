@@ -9,7 +9,10 @@
 #
 
 class Host < ApplicationRecord
-  VALID_MAKERS = ['juniper', 'cisco', 'alcatel']
+  VALID_MAKERS = ['juniper', 'cisco', 'alcatel'].freeze
+
+  has_many :tickets, inverse_of: :host
+
   validates :maker, inclusion: { in: VALID_MAKERS }
   validates :name, presence: true
 

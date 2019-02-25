@@ -1,7 +1,7 @@
 class TicketsController < ApplicationController
   before_action :set_ticket, only: [:destroy]
   before_action :set_ticket_with_preload, only: [:show]
-  before_action :generate_comparison_if_not_exist, only: [:show]
+  before_action :execute_generating_ticket_job, only: [:show]
 
   # GET /tickets
   # GET /tickets.json
@@ -12,7 +12,7 @@ class TicketsController < ApplicationController
   # GET /tickets/1
   # GET /tickets/1.json
   def show
-    @diff_sets = DiffSet.where(ticket_id: @ticket.id)
+    @diff_sets = DiffSet.where(ticket_id: @ticket&.id)
   end
 
   # GET /tickets/new
@@ -23,7 +23,6 @@ class TicketsController < ApplicationController
   # POST /tickets
   # POST /tickets.json
   def create
-
     @ticket = Ticket.new(ticket_params)
 
     respond_to do |format|
@@ -55,12 +54,16 @@ class TicketsController < ApplicationController
 
     def set_ticket_with_preload
       @ticket = Ticket.preload(raw_logs: :command_log_sets)
-                  .find(params[:id])
+                  .find_by(id: params[:id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def ticket_params
       params.require(:ticket).permit(:code, :host_id, raw_log_ids: [])
+    end
+
+    def execute_generating_ticket_job
+      GenerateTicketJob.set(wait: 5.second).perform_later
     end
 
     def generate_comparison_if_not_exist
