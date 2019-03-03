@@ -7,7 +7,9 @@ Rails.application.routes.draw do
 
   resources :tickets, only: [:index, :show, :new, :create]
 
-  resources :raw_logs, only: [:index, :new, :create, :destroy]
+  resources :raw_logs, only: [:index, :new, :create, :destroy] do
+    get 'download', to: 'raw_logs#download', on: :member
+  end
 
   resources :diff_sets, only: [:show]
   resources :diff_units, only: [:show]

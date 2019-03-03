@@ -74,3 +74,5 @@ gem 'diffy', '~> 3.2.1'
 
 # use sidekiq (https://github.com/mperham/sidekiq)
 gem 'sidekiq'
+
+gem 'rubyzip'

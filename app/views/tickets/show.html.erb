@@ -7,6 +7,9 @@
   <dd>
     <%= link_to @ticket.normal_log, rails_blob_path(@ticket.normal_log.raw_log, disposition: "attachment") %>
     <%= link_to @ticket.abnormal_log, rails_blob_path(@ticket.abnormal_log.raw_log, disposition: "attachment") %>
+
+    <br/>
+    <%= link_to "Download", download_raw_log_path(@ticket.normal_log.raw_log.id), class: "btn btn-primary" %>
   </dd>
 
   <h2><%= DiffSet.model_name.human.titleize %></h2>
