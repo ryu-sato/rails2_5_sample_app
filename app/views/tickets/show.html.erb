@@ -1,4 +1,4 @@
-<% if @ticket.present? %>
+<% if @diff_sets.present? %>
   <dt><%= Ticket.human_attribute_name('code') %></dt>
   <dd><%= @ticket.code %></dd>
   <dt><%= Host.model_name.human.titleize %></dt>

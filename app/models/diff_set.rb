@@ -19,5 +19,5 @@ class DiffSet < ApplicationRecord
   belongs_to :ticket, inverse_of: :diff_sets, optional: true
   has_many :diff_units, inverse_of: :diff_set, dependent: :destroy
 
-  validates :diff_summary, presence: true
+  validates :diff_summary, presence: true, allow_blank: true
 end
