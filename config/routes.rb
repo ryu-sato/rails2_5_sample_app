@@ -15,4 +15,7 @@ Rails.application.routes.draw do
   resources :diff_units, only: [:show]
 
   resources :command_logs, only: [:show]
+
+  require 'sidekiq/web'
+  mount Sidekiq::Web => '/sidekiq'
 end

@@ -13,7 +13,18 @@ class TicketsController < ApplicationController
   def show
     @diff_sets = DiffSet.where(ticket_id: @ticket&.id)
     if @diff_sets.blank?
-      GenerateTicketJob.perform_later @ticket
+      # Create lock
+      GeneratingTicket.with_advisory_lock("#{@ticket.code}_#{@ticket.host}_#{@ticket.normal_log.id}_#{@ticket.abnormal_log.id}") do
+        logger.debug "#{@ticket.code}_#{@ticket.host}_#{@ticket.normal_log.id}_#{@ticket.abnormal_log.id}"
+        if GeneratingTicket.exists?(ticket_code: @ticket.code, hostname: @ticket.host.to_s, normal_raw_log_id: @ticket.normal_log.id, abnormal_raw_log_id: @ticket.abnormal_log.id)
+          logger.info "already generating ticket. #{@ticket.code}_#{@ticket.host}_#{@ticket.normal_log.id}_#{@ticket.abnormal_log.id}"
+          render 'show' and return
+        end
+        GeneratingTicket.create!(ticket_code: @ticket.code, hostname: @ticket.host, normal_raw_log_id: @ticket.normal_log.id, abnormal_raw_log_id: @ticket.abnormal_log.id)
+      end
+
+      # Generate ticket
+      GenerateTicketJob.set(wait: 1.minute).perform_later @ticket
     end
   end
 
@@ -26,7 +37,7 @@ class TicketsController < ApplicationController
   # POST /tickets.json
   def create
     @ticket = Ticket.new(ticket_params)
-
+p "ticket_params: #{ticket_params}"
     respond_to do |format|
       if @ticket.errors.size == 0 && @ticket.save
         format.html { redirect_to @ticket, notice: 'Ticket was successfully created.' }

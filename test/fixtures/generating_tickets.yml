@@ -1,0 +1,26 @@
+# == Schema Information
+#
+# Table name: generating_tickets
+#
+#  id                  :integer          not null, primary key
+#  hostname            :string
+#  ticket_code         :string
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  abnormal_raw_log_id :bigint
+#  normal_raw_log_id   :bigint
+#
+
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  ticket_code: MyString
+  hostname: MyString
+  normal_raw_log_id: 
+  abnormal_raw_log_id: 
+
+two:
+  ticket_code: MyString
+  hostname: MyString
+  normal_raw_log_id: 
+  abnormal_raw_log_id: 

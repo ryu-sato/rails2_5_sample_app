@@ -76,3 +76,6 @@ gem 'diffy', '~> 3.2.1'
 gem 'sidekiq'
 
 gem 'rubyzip'
+
+# use with_advisory_lock
+gem 'with_advisory_lock'
