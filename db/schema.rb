@@ -91,15 +91,6 @@ ActiveRecord::Schema.define(version: 2019_03_10_181614) do
     t.index ["diff_set_id"], name: "index_diff_units_on_diff_set_id"
   end
 
-  create_table "executing_tickets", force: :cascade do |t|
-    t.string "ticket_code"
-    t.string "hostname"
-    t.bigint "normal_raw_log_id"
-    t.bigint "abnormal_raw_log_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "generating_tickets", force: :cascade do |t|
     t.string "ticket_code"
     t.string "hostname"
