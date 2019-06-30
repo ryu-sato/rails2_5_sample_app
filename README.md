@@ -1,9 +1,9 @@
 
 # 下記機能をテストしています。
 
-* Active Admin
 * Active Storage
 * Basic Authentication
+* with_advisory_lock
 * Sidekiq
 
 # How to run
