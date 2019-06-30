@@ -2,8 +2,8 @@ root = true
 
 [*]
 end_of_line = lf
-
-[*.{rb,erb,scss}]
 charset = utf-8
 indent_style = space
+
+[*.{rb,erb,scss,rake}]
 indent_size = 2
