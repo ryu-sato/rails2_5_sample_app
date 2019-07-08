@@ -51,7 +51,7 @@ group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
 
   # An IRB alternative and runtime developer console (http://pryrepl.org)
-  gem 'pry', '~> 0.11.3'
+  gem 'pry', '~> 0.12.2'
   # Fast debugging with Pry. (https://github.com/deivid-rodriguez/pry-byebug)
   gem 'pry-byebug'
 end
