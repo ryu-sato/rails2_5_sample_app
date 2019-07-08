@@ -11,7 +11,7 @@ gem 'rails', '~> 5.2.1'
 gem 'sqlite3', '~> 1.3.6'
 # Use Puma as the app server
 # Puma is a simple, fast, threaded, and highly concurrent HTTP 1.1 server for Ruby/Rack applications (http://puma.io)
-gem 'puma', '~> 3.11'
+gem 'puma', '~> 4.0'
 # Use SCSS for stylesheets
 # Sass adapter for the Rails asset pipeline. (https://github.com/rails/sass-rails)
 gem 'sass-rails', '~> 5.0'
